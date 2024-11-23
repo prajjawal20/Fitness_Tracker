@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background: #0078D7;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #0078D7;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        form label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        form input, form button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        form button {
+            background: #0078D7;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        form button:hover {
+            background: #005BB5;
+        }
+        .progress {
+            margin-top: 20px;
+            background: #e8e8e8;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .progress div {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Fitness Tracker</h1>
+</header>
+
+<div class="container">
+    <h2>Update Your Fitness Data</h2>
+    <form id="fitnessForm">
+        <label for="steps">Steps Taken:</label>
+        <input type="number" id="steps" placeholder="Enter steps taken" required>
+
+        <label for="calories">Calories Burned:</label>
+        <input type="number" id="calories" step="0.1" placeholder="Enter calories burned" required>
+
+        <label for="water">Water Consumed (liters):</label>
+        <input type="number" id="water" step="0.1" placeholder="Enter water intake" required>
+
+        <button type="submit">Update Progress</button>
+    </form>
+
+    <h2>Your Fitness Progress</h2>
+    <div class="progress">
+        <div><strong>Steps:</strong> <span id="progressSteps">0</span>/10000</div>
+        <div><strong>Calories Burned:</strong> <span id="progressCalories">0.0</span>/2000.0</div>
+        <div><strong>Water Consumed:</strong> <span id="progressWater">0.0</span>/2.0 liters</div>
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById('fitnessForm');
+    const progressSteps = document.getElementById('progressSteps');
+    const progressCalories = document.getElementById('progressCalories');
+    const progressWater = document.getElementById('progressWater');
+
+    let totalSteps = 0;
+    let totalCalories = 0.0;
+    let totalWater = 0.0;
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const steps = parseInt(document.getElementById('steps').value);
+        const calories = parseFloat(document.getElementById('calories').value);
+        const water = parseFloat(document.getElementById('water').value);
+
+        totalSteps += steps;
+        totalCalories += calories;
+        totalWater += water;
+
+        progressSteps.textContent = totalSteps;
+        progressCalories.textContent = totalCalories.toFixed(1);
+        progressWater.textContent = totalWater.toFixed(1);
+
+        form.reset();
+    });
+</script>
+
+</body>
+</html>
