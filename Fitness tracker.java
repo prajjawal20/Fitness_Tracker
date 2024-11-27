@@ -1,70 +1,126 @@
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
-class FitnessTracker {
+// Model Class
+class FitnessTrackerModel {
     private String userName;
     private int stepsGoal;
     private int stepsTaken;
     private double caloriesGoal;
     private double caloriesBurned;
-    private double waterGoal; // in liters
-    private double waterConsumed; // in liters
+    private double waterGoal;
+    private double waterConsumed;
 
     // Constructor
-    public FitnessTracker(String userName) {
+    public FitnessTrackerModel(String userName, int stepsGoal, double caloriesGoal, double waterGoal) {
         this.userName = userName;
-        this.stepsGoal = 10000; // Default step goal
-        this.caloriesGoal = 2000; // Default calorie goal
-        this.waterGoal = 2.0; // Default water goal in liters
+        this.stepsGoal = stepsGoal;
+        this.caloriesGoal = caloriesGoal;
+        this.waterGoal = waterGoal;
         this.stepsTaken = 0;
         this.caloriesBurned = 0;
         this.waterConsumed = 0;
     }
 
-    // Update steps taken
-    public void updateSteps(int steps) {
-        this.stepsTaken += steps;
-        System.out.println("Steps updated. Total steps taken: " + this.stepsTaken);
+    // Getters and Setters
+    public String getUserName() {
+        return userName;
     }
 
-    // Update calories burned
-    public void updateCalories(double calories) {
-        this.caloriesBurned += calories;
-        System.out.println("Calories updated. Total calories burned: " + this.caloriesBurned);
+    public int getStepsGoal() {
+        return stepsGoal;
     }
 
-    // Update water consumed
-    public void updateWater(double liters) {
-        this.waterConsumed += liters;
-        System.out.println("Water intake updated. Total water consumed: " + this.waterConsumed + " liters.");
-    }
-
-    // Display progress
-    public void showProgress() {
-        System.out.println("\nFitness Progress for " + userName);
-        System.out.println("Steps: " + stepsTaken + "/" + stepsGoal);
-        System.out.println("Calories Burned: " + caloriesBurned + "/" + caloriesGoal);
-        System.out.println("Water Consumed: " + waterConsumed + "/" + waterGoal + " liters\n");
-    }
-
-    // Set new fitness goals
-    public void setGoals(int stepsGoal, double caloriesGoal, double waterGoal) {
+    public void setStepsGoal(int stepsGoal) {
         this.stepsGoal = stepsGoal;
+    }
+
+    public int getStepsTaken() {
+        return stepsTaken;
+    }
+
+    public void setStepsTaken(int stepsTaken) {
+        this.stepsTaken = stepsTaken;
+    }
+
+    public double getCaloriesGoal() {
+        return caloriesGoal;
+    }
+
+    public void setCaloriesGoal(double caloriesGoal) {
         this.caloriesGoal = caloriesGoal;
+    }
+
+    public double getCaloriesBurned() {
+        return caloriesBurned;
+    }
+
+    public void setCaloriesBurned(double caloriesBurned) {
+        this.caloriesBurned = caloriesBurned;
+    }
+
+    public double getWaterGoal() {
+        return waterGoal;
+    }
+
+    public void setWaterGoal(double waterGoal) {
         this.waterGoal = waterGoal;
-        System.out.println("Goals updated successfully!");
+    }
+
+    public double getWaterConsumed() {
+        return waterConsumed;
+    }
+
+    public void setWaterConsumed(double waterConsumed) {
+        this.waterConsumed = waterConsumed;
     }
 }
 
+// DAO Class
+class FitnessTrackerDAO {
+    private Map<String, FitnessTrackerModel> users = new HashMap<>();
+
+    // Save a user's data
+    public void saveUser(FitnessTrackerModel user) {
+        users.put(user.getUserName(), user);
+        System.out.println("User data saved for: " + user.getUserName());
+    }
+
+    // Retrieve a user's data
+    public FitnessTrackerModel getUser(String userName) {
+        return users.get(userName);
+    }
+
+    // Update a user's data
+    public void updateUser(FitnessTrackerModel user) {
+        if (users.containsKey(user.getUserName())) {
+            users.put(user.getUserName(), user);
+            System.out.println("User data updated for: " + user.getUserName());
+        } else {
+            System.out.println("User not found: " + user.getUserName());
+        }
+    }
+}
+
+// Main Application
 public class FitnessTrackerApp {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        FitnessTrackerDAO dao = new FitnessTrackerDAO();
+
         System.out.println("Welcome to the Fitness Tracker!");
         System.out.print("Enter your name: ");
         String name = scanner.nextLine();
 
-        FitnessTracker tracker = new FitnessTracker(name);
-        int choice;
+        // Check if user exists or create a new one
+        FitnessTrackerModel user = dao.getUser(name);
+        if (user == null) {
+            user = new FitnessTrackerModel(name, 10000, 2000, 2.0);
+            dao.saveUser(user);
+        }
 
+        int choice;
         do {
             System.out.println("\nMenu:");
             System.out.println("1. Update Steps");
@@ -80,21 +136,34 @@ public class FitnessTrackerApp {
                 case 1:
                     System.out.print("Enter steps taken: ");
                     int steps = scanner.nextInt();
-                    tracker.updateSteps(steps);
+                    user.setStepsTaken(user.getStepsTaken() + steps);
+                    System.out.println("Steps updated. Total steps: " + user.getStepsTaken());
+                    dao.updateUser(user);
                     break;
+
                 case 2:
                     System.out.print("Enter calories burned: ");
                     double calories = scanner.nextDouble();
-                    tracker.updateCalories(calories);
+                    user.setCaloriesBurned(user.getCaloriesBurned() + calories);
+                    System.out.println("Calories updated. Total calories burned: " + user.getCaloriesBurned());
+                    dao.updateUser(user);
                     break;
+
                 case 3:
                     System.out.print("Enter water consumed (in liters): ");
                     double water = scanner.nextDouble();
-                    tracker.updateWater(water);
+                    user.setWaterConsumed(user.getWaterConsumed() + water);
+                    System.out.println("Water intake updated. Total water consumed: " + user.getWaterConsumed());
+                    dao.updateUser(user);
                     break;
+
                 case 4:
-                    tracker.showProgress();
+                    System.out.println("\nFitness Progress for " + user.getUserName());
+                    System.out.println("Steps: " + user.getStepsTaken() + "/" + user.getStepsGoal());
+                    System.out.println("Calories Burned: " + user.getCaloriesBurned() + "/" + user.getCaloriesGoal());
+                    System.out.println("Water Consumed: " + user.getWaterConsumed() + "/" + user.getWaterGoal() + " liters\n");
                     break;
+
                 case 5:
                     System.out.print("Enter new steps goal: ");
                     int stepsGoal = scanner.nextInt();
@@ -102,11 +171,17 @@ public class FitnessTrackerApp {
                     double caloriesGoal = scanner.nextDouble();
                     System.out.print("Enter new water goal (in liters): ");
                     double waterGoal = scanner.nextDouble();
-                    tracker.setGoals(stepsGoal, caloriesGoal, waterGoal);
+                    user.setStepsGoal(stepsGoal);
+                    user.setCaloriesGoal(caloriesGoal);
+                    user.setWaterGoal(waterGoal);
+                    System.out.println("Goals updated successfully!");
+                    dao.updateUser(user);
                     break;
+
                 case 6:
                     System.out.println("Exiting Fitness Tracker. Stay healthy!");
                     break;
+
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
